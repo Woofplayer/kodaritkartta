@@ -31,7 +31,7 @@
       <img src="kuvat/taustakuva.jpg" alt="Tässä pitäisi olla taustakuva" width=100%>
       <div class="otsikon_teksti">
         <h1> Seikkaillaan kartalla </h1>
-        <p> Kodareiden Mini Full Stack -Kursilla. </p>
+        <p> Kodareiden Mini Full Stack -Kurssilla. </p>
       </div>
     </div>
     <div class="row">
@@ -47,8 +47,17 @@
 
     <div class="row">
       <div class="col-sm-7">
-
         <div id="kartta"></div>
+      </div>
+      <div class="col-sm-5">
+        <table id="paikkataulukko" class="table table-hover">
+          <body id="paikkataulukkobody">
+            <tr>
+              <th> Paikka <th>
+              <th> Arvostelu </th>
+            </tr>
+          </body>
+        </table>
       </div>
     </div>
     <button onclick="avaa_paikkatietolomake();" type="button" class="btn btn-secondary oma_nappi">Tallenna sijainti</button>
