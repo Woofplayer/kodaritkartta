@@ -6,9 +6,9 @@ var kartta;
 var paikka_merkitty = 0;
 
 async function getData() {
-  const response = await fetch ('/api/paikat');
+  const response = await fetch('/api/paikat');
   const data = await response.json();
-  console.log(data);
+  console.log('data: ', data);
   tayta_paikkataulukko(data);
   merkitsePaikat(data);
 }
@@ -16,8 +16,8 @@ async function getData() {
 function merkitsePaikat(data) {
   var kayty_paikka;
 
-  for (var i = 0; i < data.length; i++){
-    kayty_paikka = L.marker([data[i].latitude, data [i].longitude]).addTo(kartta);
+  for (var i = 0; i < data.length; i++) {
+    kayty_paikka = L.marker([data[i].latitude, data[i].longitude]).addTo(kartta);
     kayty_paikka.bindPopup("<b>" + data[i].paikka + "</b><br>" + data[i].arvostelu).openPopup();
   }
 
@@ -31,13 +31,13 @@ function tyhjenna_paikkataulukko() {
   var table = document.getElementById("paikkataulukko");
 
   var rivien_maara = table.rows.length -1;
-  for (var i = 0; rivien_maara; i++) {
+  for (var i = 0; i < rivien_maara; i++) {
     table.deleteRow(1);
   }
 }
 
 function tayta_paikkataulukko(data) {
-  var table = document.getElementById("paikkataulukko")
+  var table = document.getElementById("paikkataulukko");
 
   for (var i = 0; i < data.length; i++) {
     var row = table.insertRow(i + 1);
@@ -62,18 +62,17 @@ if ("geolocation" in navigator) {
     document.getElementById("pituusasteet").innerHTML = latitude;
     document.getElementById("leveysasteet").innerHTML = longitude;
 
-
     kartta = L.map('kartta').setView([latitude, longitude], 13);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
     }).addTo(kartta);
 
-    var marker = L.marker([latitude,longitude]).addTo(kartta);
+    var marker = L.marker([latitude, longitude]).addTo(kartta);
     getData();
   });
 } else {
-  console.log("Sijaintitiedot ei saatavilla")
+  console.log("Sijaintitiedot ei saatavilla");
 }
 
 function avaa_paikkatietolomake() {
@@ -96,4 +95,29 @@ function laheta_arvostelu() {
 function laheta_arvostelu() {
   var paikka = document.getElementById("paikka").value;
   var arvostelu = document.getElementById("arvostelu").value;
+
+  console.log('Laheta arvostelu paikka: ', paikka);
+  console.log('Laheta arvostelu arvostelu: ', arvostelu);
+
+  const data = {paikka, arvostelu, longitude, latitude};
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type":"application/json"
+    },
+    body: JSON.stringify(data)
+  };
+
+  console.log('Laheta arvostelu options: ', options);
+
+  fetch('/api/arvostelu', options).then(function(response) {
+    console.log(response);
+    if(response.status == 200) {
+      tyhjenna_paikkataulukko();
+      getData();
+      sulje_paikkatietolomake();
+    }
+  }, function(error) {
+    console.log(error.message);
+  });
 }
